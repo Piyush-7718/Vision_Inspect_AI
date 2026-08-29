@@ -31,9 +31,12 @@
 * **Inspection History:**
   * Standardized column structure (`Batch`, `Status`, `Item count`, `Flags`, `Verdict`, `Completed`) with centered data alignment.
 
+### 5. 🔍 Validation & Sign-Off
+* **JWT Authentication**
+  * Verify updated summary-card typography across desktop and mobile viewports, run regression suites, and lock the refinement.
+
 ---
 
 ## ⏳ In Progress / Next Up
 
 - [ ] **Inspection Results Summary Cards:** Enlarge card labels and supporting captions while preserving primary metric number scaling.
-- [ ] **Validation & Sign-Off:** Verify updated summary-card typography across desktop and mobile viewports, run regression suites, and lock the refinement.
