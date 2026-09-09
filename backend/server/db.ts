@@ -200,3 +200,17 @@ export async function recordCredentialSignIn(userId: number): Promise<void> {
   await getDb();
   await User.updateOne({ id: userId }, { $set: { lastSignedIn: new Date() } });
 }
+
+export async function updateUserPasswordByEmail(email: string, passwordHash: string): Promise<User> {
+  await getDb();
+  const normalizedEmail = email.trim().toLowerCase();
+  const escapeRegex = (text: string) => text.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
+  const user = await User.findOneAndUpdate(
+    { email: { $regex: new RegExp("^" + escapeRegex(normalizedEmail) + "$", "i") } },
+    { $set: { passwordHash } },
+    { new: true }
+  );
+  if (!user) throw new Error("No account found with this email address.");
+  return user.toObject() as User;
+}
+

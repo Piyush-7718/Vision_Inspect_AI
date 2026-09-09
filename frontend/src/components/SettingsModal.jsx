@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AlertTriangle, Check, ChevronDown, Copy, Eye, EyeOff, KeyRound, Lock, LogOut, Mail, Settings, Shield, Shuffle, SlidersHorizontal, Trash2, User, X } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { trpc } from "@/lib/trpc";
 
 const EMOJI_CATEGORIES = [
   {
@@ -38,6 +39,7 @@ const ALL_EMOJIS = EMOJI_CATEGORIES.flatMap((c) => c.emojis);
 
 export default function SettingsModal({ isOpen, onClose, user, onSignOut }) {
   const [activeTab, setActiveTab] = useState("account");
+  const resetPasswordMutation = trpc.auth.resetPassword.useMutation();
 
   const cleanUserName = (user?.name || "").trim().replace(/\s*\.$/, "") || "User";
   const userName = cleanUserName;
@@ -168,15 +170,11 @@ export default function SettingsModal({ isOpen, onClose, user, onSignOut }) {
     setTimeout(() => setCopiedUserId(false), 2000);
   };
 
-  const handlePasswordSubmit = (e) => {
+  const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     setPasswordError("");
-    if (!currentPassword) {
-      setPasswordError("Please enter your current password.");
-      return;
-    }
-    if (!newPassword || newPassword.length < 6) {
-      setPasswordError("New password must be at least 6 characters.");
+    if (!newPassword || newPassword.length < 8) {
+      setPasswordError("New password must be at least 8 characters.");
       return;
     }
     if (newPassword !== confirmPassword) {
@@ -184,15 +182,22 @@ export default function SettingsModal({ isOpen, onClose, user, onSignOut }) {
       return;
     }
 
-    // Success feedback
-    setPasswordSuccess(true);
-    setTimeout(() => {
-      setPasswordSuccess(false);
-      setShowPasswordForm(false);
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-    }, 1500);
+    try {
+      await resetPasswordMutation.mutateAsync({
+        email: userEmail,
+        newPassword: newPassword,
+      });
+      setPasswordSuccess(true);
+      setTimeout(() => {
+        setPasswordSuccess(false);
+        setShowPasswordForm(false);
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+      }, 1500);
+    } catch (err) {
+      setPasswordError(err?.message || "Failed to update password. Please try again.");
+    }
   };
 
   const handleDeleteAccount = () => {

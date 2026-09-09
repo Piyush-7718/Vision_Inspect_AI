@@ -6,7 +6,8 @@ import { CREDENTIAL_COOKIE_NAME, createCredentialToken, hashPassword, verifyPass
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
-import { addCredentialPassword, createCredentialUser, getCredentialUserByEmail, recordCredentialSignIn } from "./db";
+import superjson from "superjson";
+import { addCredentialPassword, createCredentialUser, getCredentialUserByEmail, recordCredentialSignIn, updateUserPasswordByEmail } from "./db";
 
 const credentialsInput = z.object({
   email: z.string().email().max(320).transform(value => value.trim().toLowerCase()),
@@ -72,6 +73,19 @@ export const appRouter = router({
       });
       await setCredentialCookie(ctx, user);
       return { user: publicProfile(user) };
+    }),
+    resetPassword: publicProcedure.input(z.object({
+      email: z.string().email().max(320),
+      newPassword: z.string().min(8).max(128),
+    })).mutation(async ({ input }) => {
+      const email = input.email.trim().toLowerCase();
+      const passwordHash = await hashPassword(input.newPassword);
+      try {
+        const user = await updateUserPasswordByEmail(email, passwordHash);
+        return { success: true, message: "Password updated successfully! You can now log in." };
+      } catch (err: any) {
+        throw new TRPCError({ code: "NOT_FOUND", message: err.message || "User not found with this email." });
+      }
     }),
     login: publicProcedure.input(credentialsInput).mutation(async ({ ctx, input }) => {
       const user = await getCredentialUserByEmail(input.email);

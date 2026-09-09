@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, CheckCircle2, Eye, EyeOff, Factory, Info, LoaderCircle, LockKeyhole, Mail, ShieldCheck, UserRound } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, Eye, EyeOff, Factory, Info, LoaderCircle, LockKeyhole, Mail, ShieldCheck, UserRound, X } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import BrandMark from "@/components/BrandMark";
@@ -84,9 +84,41 @@ export default function Login() {
     }
   };
 
+  const resetMutation = trpc.auth.resetPassword.useMutation();
+  const [showResetModal, setShowResetModal] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetPasswordVal, setResetPasswordVal] = useState("");
+  const [resetState, setResetState] = useState("idle");
+  const [resetMsg, setResetMsg] = useState("");
+
   const forgotPassword = () => {
-    setState("info");
-    setMessage("Password recovery will be available once database-backed authentication is connected.");
+    setResetEmail(loginForm.email || "");
+    setResetPasswordVal("");
+    setResetState("idle");
+    setResetMsg("");
+    setShowResetModal(true);
+  };
+
+  const submitReset = async (e) => {
+    e.preventDefault();
+    if (!resetEmail || !resetPasswordVal || resetPasswordVal.length < 8) {
+      setResetState("error");
+      setResetMsg("Please enter a valid email and new password (min 8 characters).");
+      return;
+    }
+    setResetState("loading");
+    try {
+      const res = await resetMutation.mutateAsync({ email: resetEmail, newPassword: resetPasswordVal });
+      setResetState("success");
+      setResetMsg(res.message || "Password updated! You can now log in.");
+      setTimeout(() => {
+        setShowResetModal(false);
+        setLoginForm(curr => ({ ...curr, email: resetEmail, password: resetPasswordVal }));
+      }, 1500);
+    } catch (err) {
+      setResetState("error");
+      setResetMsg(err?.message || "Failed to reset password.");
+    }
   };
 
   const isSignUp = mode === "signup";
@@ -148,6 +180,39 @@ export default function Login() {
           <p className="vi-auth-note"><Info size={14} aria-hidden="true" /> Your VisionInspect account and role permissions are securely managed.</p>
         </div>
       </section>
+      {showResetModal && (
+        <div className="vi-modal-overlay" onClick={() => setShowResetModal(false)} role="dialog" aria-modal="true">
+          <div className="vi-auth-panel" style={{ width: "100%", maxWidth: "460px", padding: "32px", borderRadius: "16px", background: "var(--bg-surface, #0f172a)", border: "1px solid var(--border-color, rgba(255,255,255,0.1))", boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)", position: "relative" }} onClick={(e) => e.stopPropagation()}>
+            <button type="button" className="vi-settings-close-btn" onClick={() => setShowResetModal(false)} style={{ position: "absolute", top: "20px", right: "20px" }} aria-label="Close modal"><X size={18} /></button>
+            <p className="vi-eyebrow vi-mono" style={{ color: "#38bdf8", marginBottom: "6px" }}>Account Recovery</p>
+            <h2 style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: "8px" }}>Reset your password</h2>
+            <p className="vi-auth-sub" style={{ marginBottom: "24px" }}>Enter your registered work email and choose a new secure password.</p>
+            <form onSubmit={submitReset}>
+              <div className="vi-auth-field" style={{ marginBottom: "18px" }}>
+                <label htmlFor="reset-email">Work email</label>
+                <div className="vi-auth-input">
+                  <Mail size={17} aria-hidden="true" />
+                  <input id="reset-email" type="email" value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} placeholder="you@company.com" required />
+                </div>
+              </div>
+              <div className="vi-auth-field" style={{ marginBottom: "20px" }}>
+                <label htmlFor="reset-password">New password</label>
+                <div className="vi-auth-input">
+                  <LockKeyhole size={17} aria-hidden="true" />
+                  <input id="reset-password" type="password" value={resetPasswordVal} onChange={(e) => setResetPasswordVal(e.target.value)} placeholder="At least 8 characters" required />
+                </div>
+              </div>
+              <AuthMessage state={resetState} message={resetMsg} />
+              <div style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
+                <button type="button" className="vi-auth-submit" onClick={() => setShowResetModal(false)} style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.15)", color: "var(--text-primary, #f8fafc)" }}>Cancel</button>
+                <button type="submit" className="vi-auth-submit" disabled={resetState === "loading"}>
+                  {resetState === "loading" ? <><LoaderCircle size={17} className="animate-spin" /> Updating...</> : <>Save new password <ArrowRight size={17} /></>}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
