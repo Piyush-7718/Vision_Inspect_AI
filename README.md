@@ -9,7 +9,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 > **VisionInspect AI** is an end-to-end, Industry 4.0 automated quality inspection platform. Leveraging state-of-the-art computer vision and deep learning models, it identifies manufacturing anomalies, localizes surface defects, computes an objective multi-factor **Severity Score**, renders automated **Pass/Fail decisions**, and provides executive production analytics in real time.
-
+* **Live Demo:** `http://15.206.204.165/` (Industrial EC2 Deployment)
 ---
 
 ## 📌 Table of Contents
@@ -287,4 +287,4 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 * **Author:** VisionInspect AI Team
 * **Project Repository:** [https://github.com/your-username/visioninspect-ai](https://github.com/your-username/visioninspect-ai)
-* **Live Demo:** `http://15.206.204.165/` (Industrial EC2 Deployment)
+
