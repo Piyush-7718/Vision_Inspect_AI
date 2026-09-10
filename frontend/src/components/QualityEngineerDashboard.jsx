@@ -220,7 +220,7 @@ export default function QualityEngineerDashboard({ user, onSignOut, isSigningOut
 
   const fetchNotices = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/announcements");
+      const res = await fetch("/pyapi/api/announcements");
       if (res.ok) {
         const data = await res.json();
         if (data.success && Array.isArray(data.announcements)) {
@@ -280,7 +280,7 @@ export default function QualityEngineerDashboard({ user, onSignOut, isSigningOut
       return next;
     });
     try {
-      await fetch(`http://localhost:8000/api/announcements/${id}/read`, {
+      await fetch(`/pyapi/api/announcements/${id}/read`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -304,7 +304,7 @@ export default function QualityEngineerDashboard({ user, onSignOut, isSigningOut
       return next;
     });
     try {
-      await fetch("http://localhost:8000/api/announcements/read-all", {
+      await fetch("/pyapi/api/announcements/read-all", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -515,7 +515,7 @@ export default function QualityEngineerDashboard({ user, onSignOut, isSigningOut
   const fetchLiveData = async (showNotification = false) => {
     setIsRefreshing(true);
     try {
-      const response = await fetch("http://localhost:8000/api/batches");
+      const response = await fetch("/pyapi/api/batches");
       if (response.ok) {
         const resData = await response.json();
         if (resData.success && resData.batches?.length > 0) {
@@ -547,13 +547,13 @@ export default function QualityEngineerDashboard({ user, onSignOut, isSigningOut
               reviewedBy: b.reviewedBy || null,
               reviewedById: b.reviewedById || null,
               createdBy: b.createdBy || b.scannedBy || null,
-              image: b.image ? (b.image.startsWith("http") ? b.image : `http://localhost:8000${b.image}`) : "/manus-storage/hazelnut_cap_defective.png",
+              image: b.image ? (b.image.startsWith("http") ? b.image : `/pyapi${b.image}`) : "/manus-storage/hazelnut_cap_defective.png",
               products: (b.products || []).map(p => ({
                 id: p._id,
                 name: p.name,
                 status: p.status,
                 confidence: p.confidence,
-                imageUrl: p.imageUrl ? (p.imageUrl.startsWith("http") ? p.imageUrl : `http://localhost:8000${p.imageUrl}`) : b.image,
+                imageUrl: p.imageUrl ? (p.imageUrl.startsWith("http") ? p.imageUrl : `/pyapi${p.imageUrl}`) : b.image,
                 captured: formatCapturedTime(p.capturedAt || b.capturedAt),
                 capturedAt: p.capturedAt || b.capturedAt,
                 createdAt: p.createdAt || b.createdAt || b.capturedAt
@@ -565,11 +565,11 @@ export default function QualityEngineerDashboard({ user, onSignOut, isSigningOut
               const gUrl = f?.gradcamUrl || (f?.rawOutput && f.rawOutput.gradcamUrl);
               const sUrl = f?.segmentationUrl || (f?.rawOutput && f.rawOutput.segmentationUrl);
               const bUrl = f?.bboxUrl || (f?.rawOutput && f.rawOutput.bboxUrl);
-              const gradcamImg = gUrl ? (gUrl.startsWith("http") ? gUrl : `http://localhost:8000${gUrl}`) : null;
-              const segImg = sUrl ? (sUrl.startsWith("http") ? sUrl : `http://localhost:8000${sUrl}`) : null;
-              const bboxImg = bUrl ? (bUrl.startsWith("http") ? bUrl : `http://localhost:8000${bUrl}`) : null;
+              const gradcamImg = gUrl ? (gUrl.startsWith("http") ? gUrl : `/pyapi${gUrl}`) : null;
+              const segImg = sUrl ? (sUrl.startsWith("http") ? sUrl : `/pyapi${sUrl}`) : null;
+              const bboxImg = bUrl ? (bUrl.startsWith("http") ? bUrl : `/pyapi${bUrl}`) : null;
               const itemImg = f?.imageUrl || prod.imageUrl || b.image;
-              const finalImg = itemImg ? (itemImg.startsWith("http") ? itemImg : `http://localhost:8000${itemImg}`) : "/manus-storage/hazelnut_cap_defective.png";
+              const finalImg = itemImg ? (itemImg.startsWith("http") ? itemImg : `/pyapi${itemImg}`) : "/manus-storage/hazelnut_cap_defective.png";
 
               loadedResults.push({
                 id: f?.findingCode || f?._id || `IR-${prod._id}`,
@@ -610,7 +610,7 @@ export default function QualityEngineerDashboard({ user, onSignOut, isSigningOut
       }
 
       // Fetch stored manual reviews from MongoDB
-      const revRes = await fetch("http://localhost:8000/api/reviews/list");
+      const revRes = await fetch("/pyapi/api/reviews/list");
       if (revRes.ok) {
         const revData = await revRes.json();
         if (revData.success && revData.reviews?.length > 0) {
@@ -685,7 +685,7 @@ export default function QualityEngineerDashboard({ user, onSignOut, isSigningOut
       formData.append("scanned_by", user?.name || "Quality Engineer");
       formData.append("scanned_by_id", String(user?.id ?? user?.email ?? user?.name ?? ""));
 
-      const response = await fetch("http://localhost:8000/api/batches/create", {
+      const response = await fetch("/pyapi/api/batches/create", {
         method: "POST",
         body: formData,
       });
@@ -712,7 +712,7 @@ export default function QualityEngineerDashboard({ user, onSignOut, isSigningOut
         scannedBy: user?.name || "Quality Engineer",
         createdBy: user?.name || "Quality Engineer",
         scannedById: String(user?.id ?? user?.email ?? user?.name ?? ""),
-        image: images[0]?.url ? `http://localhost:8000${images[0].url}` : "/manus-storage/hazelnut_cap_defective.png",
+        image: images[0]?.url ? `/pyapi${images[0].url}` : "/manus-storage/hazelnut_cap_defective.png",
         marker: findings[0]?.boundingBox || { left: "58%", top: "38%", width: "23%", height: "28%" },
         products: products.map((p) => ({
           id: p._id,
@@ -729,11 +729,11 @@ export default function QualityEngineerDashboard({ user, onSignOut, isSigningOut
         const gUrl = f.gradcamUrl;
         const sUrl = f.segmentationUrl;
         const bUrl = f.bboxUrl;
-        const gradcamImg = gUrl ? (gUrl.startsWith("http") ? gUrl : `http://localhost:8000${gUrl}`) : null;
-        const segImg = sUrl ? (sUrl.startsWith("http") ? sUrl : `http://localhost:8000${sUrl}`) : null;
-        const bboxImg = bUrl ? (bUrl.startsWith("http") ? bUrl : `http://localhost:8000${bUrl}`) : null;
+        const gradcamImg = gUrl ? (gUrl.startsWith("http") ? gUrl : `/pyapi${gUrl}`) : null;
+        const segImg = sUrl ? (sUrl.startsWith("http") ? sUrl : `/pyapi${sUrl}`) : null;
+        const bboxImg = bUrl ? (bUrl.startsWith("http") ? bUrl : `/pyapi${bUrl}`) : null;
         const itemImg = f.imageUrl || prod.imageUrl || img.url;
-        const finalImg = itemImg ? (itemImg.startsWith("http") ? itemImg : `http://localhost:8000${itemImg}`) : "/manus-storage/hazelnut_cap_defective.png";
+        const finalImg = itemImg ? (itemImg.startsWith("http") ? itemImg : `/pyapi${itemImg}`) : "/manus-storage/hazelnut_cap_defective.png";
 
         return {
           id: f.findingCode || f._id,
@@ -872,7 +872,7 @@ export default function QualityEngineerDashboard({ user, onSignOut, isSigningOut
     let savedReviewedAt = new Date().toISOString();
 
     try {
-      const resp = await fetch("http://localhost:8000/api/reviews/submit", {
+      const resp = await fetch("/pyapi/api/reviews/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -964,7 +964,7 @@ export default function QualityEngineerDashboard({ user, onSignOut, isSigningOut
 
   const handleDeleteBatch = async (batchId) => {
     try {
-      const res = await fetch(`http://localhost:8000/api/batches/${batchId}`, {
+      const res = await fetch(`/pyapi/api/batches/${batchId}`, {
         method: "DELETE"
       });
       if (res.ok) {
@@ -2192,7 +2192,7 @@ function ReportsSection({ reportRange, setReportRange, notify, batches = [], liv
   useEffect(() => {
     async function fetchReport() {
       try {
-        const res = await fetch(`http://localhost:8000/api/reports/summary?offset=${trendRangeOffset}`);
+        const res = await fetch(`/pyapi/api/reports/summary?offset=${trendRangeOffset}`);
         if (res.ok) {
           const data = await res.json();
           if (data.success) {

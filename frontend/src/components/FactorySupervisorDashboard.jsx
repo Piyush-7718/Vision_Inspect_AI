@@ -210,7 +210,7 @@ export default function FactorySupervisorDashboard({ user, onSignOut, isSigningO
 
   const fetchAnnouncements = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/announcements");
+      const res = await fetch("/pyapi/api/announcements");
       if (res.ok) {
         const data = await res.json();
         if (data.success && Array.isArray(data.announcements)) {
@@ -274,7 +274,7 @@ export default function FactorySupervisorDashboard({ user, onSignOut, isSigningO
     };
 
     try {
-      const res = await fetch("http://localhost:8000/api/announcements", {
+      const res = await fetch("/pyapi/api/announcements", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -313,7 +313,7 @@ export default function FactorySupervisorDashboard({ user, onSignOut, isSigningO
 
   const handleDeleteAnnouncement = async (id) => {
     try {
-      await fetch(`http://localhost:8000/api/announcements/${id}`, { method: "DELETE" });
+      await fetch(`/pyapi/api/announcements/${id}`, { method: "DELETE" });
     } catch { }
     setAnnouncements(prev => prev.filter(a => (a._id || a.id) !== id));
     try {
@@ -338,7 +338,7 @@ export default function FactorySupervisorDashboard({ user, onSignOut, isSigningO
   const refreshData = async (showNotification = false) => {
     setIsRefreshing(true);
     try {
-      const res = await fetch("http://localhost:8000/api/batches");
+      const res = await fetch("/pyapi/api/batches");
       if (res.ok) {
         const data = await res.json();
         if (data.success && data.batches) {
