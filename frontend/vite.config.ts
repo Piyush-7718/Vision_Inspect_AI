@@ -175,6 +175,11 @@ export default defineConfig({
         target: "http://localhost:3000",
         changeOrigin: true,
       },
+      "/pyapi": {
+        target: "http://127.0.0.1:8000",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/pyapi/, ""),
+      },
     },
     watch: {
       ignored: ["**/public/manus-storage/**"],
