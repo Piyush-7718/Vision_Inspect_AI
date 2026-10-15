@@ -55,8 +55,9 @@ function getISTDate(dateInput) {
   return new Date(utc + (5.5 * 60 * 60 * 1000));
 }
 
-function isBatchInISTDateRange(capturedAt, range = "Last 30 days") {
+function isBatchInISTDateRange(capturedAt, range = "All time") {
   if (!capturedAt) return true;
+  if (!range || range === "All" || range === "All time" || range === "All batches") return true;
   try {
     const batchIST = getISTDate(capturedAt);
     const nowIST = getISTDate(new Date());
@@ -147,16 +148,16 @@ export default function FactorySupervisorDashboard({ user, onSignOut, isSigningO
   }, [userKey, user?.name]);
 
   // Filters state
-  const [overviewDateRange, setOverviewDateRange] = useState("Last 7 days");
+  const [overviewDateRange, setOverviewDateRange] = useState("All time");
   const [overviewLine, setOverviewLine] = useState("All lines");
-  const [inspDateRange, setInspDateRange] = useState("Last 30 days");
+  const [inspDateRange, setInspDateRange] = useState("All time");
   const [inspLine, setInspLine] = useState("All lines");
   const [inspStatus, setInspStatus] = useState("All");
   const [inspSearch, setInspSearch] = useState("");
-  const [defectRange, setDefectRange] = useState("7 days");
+  const [defectRange, setDefectRange] = useState("All time");
   const [defectType, setDefectType] = useState("All types");
   const [defectLine, setDefectLine] = useState("All lines");
-  const [analyticsRange, setAnalyticsRange] = useState("Last 30 days");
+  const [analyticsRange, setAnalyticsRange] = useState("All time");
   const [analyticsLine, setAnalyticsLine] = useState("All lines");
   const [monitorDay, setMonitorDay] = useState("Today");
   const [monitorLine, setMonitorLine] = useState("All lines");

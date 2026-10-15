@@ -74,8 +74,8 @@ export const overviewKPIs = [
   { id: "lines", label: "Active lines", value: "3 / 4", detail: "1 idle", trend: "neutral" },
 ];
 
-export const inspectionDateFilters = ["Today", "Last 7 days", "Last 30 days"];
-export const defectTrendRanges = ["7 days", "30 days", "90 days"];
+export const inspectionDateFilters = ["All time", "Today", "Last 7 days", "Last 30 days"];
+export const defectTrendRanges = ["All time", "7 days", "30 days", "90 days"];
 export const defectTypeFilters = ["All types", "Surface", "Assembly", "Dimensional", "Packaging"];
 export const lineFilters = ["All lines", "Line 01", "Line 02", "Line 03", "Line 04"];
 export const statusFilters = ["All", "PASS", "FAIL"];

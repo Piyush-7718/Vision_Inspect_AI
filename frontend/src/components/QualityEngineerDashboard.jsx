@@ -80,12 +80,12 @@ export default function QualityEngineerDashboard({ user, onSignOut, isSigningOut
   const [reportRange, setReportRange] = useState("7 days");
   const [historySearch, setHistorySearch] = useState("");
   const [historyFilter, setHistoryFilter] = useState("All batches");
-  const [historyDateRange, setHistoryDateRange] = useState("Last 7 days");
+  const [historyDateRange, setHistoryDateRange] = useState("All time");
   const [isExportingHistory, setIsExportingHistory] = useState(false);
   const [resultFilter, setResultFilter] = useState("All");
-  const [resultDateRange, setResultDateRange] = useState("Last 30 days");
+  const [resultDateRange, setResultDateRange] = useState("All time");
   const [resultLine, setResultLine] = useState("All lines");
-  const [detailDateRange, setDetailDateRange] = useState("Last 30 days");
+  const [detailDateRange, setDetailDateRange] = useState("All time");
   const [selectedBatchId, setSelectedBatchId] = useState(null);
   const [selectedHistoryRow, setSelectedHistoryRow] = useState(null);
   const [selectedDetailBatchId, setSelectedDetailBatchId] = useState(null);

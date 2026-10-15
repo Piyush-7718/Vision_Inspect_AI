@@ -69,8 +69,8 @@ export function filterBatchesBySeverity(batches, filter) {
   return [...bySeverity].sort((left, right) => (right.sortOrder ?? 0) - (left.sortOrder ?? 0));
 }
 
-export const inspectionDateFilters = ["Today", "Last 7 days", "Last 30 days"];
-export const historyDateFilters = ["Today", "Last 7 days", "Last 15 days", "Last 30 days"];
+export const inspectionDateFilters = ["All time", "Today", "Last 7 days", "Last 30 days"];
+export const historyDateFilters = ["All time", "Today", "Last 7 days", "Last 15 days", "Last 30 days"];
 export const historyExportColumns = ["Batch", "Product and line", "Status", "Item count", "Flags", "Verdict", "Completed"];
 
 export function isBatchInDateRange(batch, dateRange) {
